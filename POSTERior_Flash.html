@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>POSTERior Flash</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #003DA6;
+    --blue-light: #0052CC;
+    --gold: #C8901A;
+    --gold-pale: #FDF3E3;
+    --bg: #0A0F1E;
+    --surface: #131929;
+    --surface2: #1A2236;
+    --border: rgba(255,255,255,0.07);
+    --text: #F0F4FF;
+    --muted: #8090B0;
+    --green: #22C55E;
+    --green-dark: #16A34A;
+    --amber: #F59E0B;
+    --red: #EF4444;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    min-height: 100dvh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-mark {
+    width: 32px; height: 32px;
+    background: var(--gold);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px; font-weight: 800;
+    color: white;
+  }
+
+  .logo-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px; font-weight: 800;
+    color: var(--text);
+    letter-spacing: 0.3px;
+  }
+
+  .logo-tag {
+    font-size: 10px;
+    color: var(--gold);
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .header-mode {
+    background: rgba(200,144,26,0.15);
+    border: 1px solid rgba(200,144,26,0.3);
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  /* ── MAIN ── */
+  main { padding: 16px 16px 80px; max-width: 520px; margin: 0 auto; }
+
+  /* ── SETUP ── */
+  .setup-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 12px;
+  }
+
+  .setup-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .setup-label::before {
+    content: '';
+    width: 14px; height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+  }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .field-row.single { grid-template-columns: 1fr; }
+
+  .field label {
+    display: block;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 5px;
+    letter-spacing: 0.3px;
+  }
+
+  input[type="text"], input[type="password"], input[type="email"] {
+    width: 100%;
+    height: 40px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0 11px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+
+  input:focus { border-color: var(--gold); }
+  input::placeholder { color: var(--muted); opacity: 0.6; }
+
+  .api-wrap { position: relative; }
+  .api-toggle {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: var(--muted); font-size: 11px;
+    cursor: pointer; font-family: inherit; padding: 2px 4px;
+  }
+
+  .remember-row {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--muted); margin-top: 10px;
+    cursor: pointer;
+  }
+
+  /* ── UPLOAD ── */
+  .upload-zone {
+    border: 2px dashed rgba(200,144,26,0.3);
+    border-radius: var(--radius);
+    background: var(--surface);
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 12px;
+  }
+
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--gold);
+    background: rgba(200,144,26,0.05);
+  }
+
+  .upload-icon {
+    width: 52px; height: 52px;
+    background: rgba(200,144,26,0.12);
+    border-radius: 50%;
+    margin: 0 auto 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .upload-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px; font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .upload-sub { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+
+  .upload-btns { display: flex; gap: 8px; justify-content: center; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    height: 40px; padding: 0 18px;
+    border-radius: var(--radius-sm);
+    font-size: 13px; font-weight: 500;
+    font-family: inherit; cursor: pointer;
+    border: none; transition: all 0.15s;
+    display: inline-flex; align-items: center; gap: 7px;
+  }
+
+  .btn-ghost {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+  .btn-flash {
+    background: var(--gold);
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    height: 52px;
+    padding: 0 32px;
+    border-radius: 12px;
+    width: 100%;
+    justify-content: center;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-flash:hover { background: #A87515; }
+  .btn-flash:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-sm { height: 34px; padding: 0 12px; font-size: 12px; }
+
+  /* ── PREVIEW ── */
+  #preview-wrap {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  #preview-img { width: 100%; max-height: 220px; object-fit: contain; display: block; background: #0d1220; }
+  .preview-bar { padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); }
+  .preview-name { font-size: 12px; color: var(--muted); }
+  #pdf-notice { padding: 28px 20px; text-align: center; font-size: 13px; color: var(--muted); display: none; }
+
+  /* ── ANALYZE BTN ── */
+  .flash-row { margin-bottom: 20px; }
+
+  /* ── LOADING ── */
+  #loading {
+    display: none;
+    text-align: center;
+    padding: 48px 0;
+  }
+
+  .flash-spinner {
+    width: 40px; height: 40px;
+    border: 3px solid rgba(200,144,26,0.2);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 18px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px; font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 5px;
+  }
+
+  .loading-sub { font-size: 12px; color: var(--muted); }
+
+  /* ── RESULTS ── */
+  #results { display: none; }
+
+  /* SCORE CARD — the "can I sell here" signal */
+  .score-card {
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    border: 1px solid;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .score-card.high { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.25); }
+  .score-card.mid  { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.25); }
+  .score-card.low  { background: rgba(239,68,68,0.07);  border-color: rgba(239,68,68,0.2); }
+
+  .score-icon {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+
+  .score-icon.high { background: rgba(34,197,94,0.15); }
+  .score-icon.mid  { background: rgba(245,158,11,0.15); }
+  .score-icon.low  { background: rgba(239,68,68,0.12); }
+
+  .score-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+    text-transform: uppercase; margin-bottom: 3px;
+  }
+
+  .score-label.high { color: var(--green); }
+  .score-label.mid  { color: var(--amber); }
+  .score-label.low  { color: var(--red); }
+
+  .score-products { font-size: 13px; color: var(--text); line-height: 1.45; }
+
+  /* RESULT CARDS */
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 10px;
+  }
+
+  .card-heading {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.3px;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 7px;
+  }
+
+  .card-heading::before {
+    content: '';
+    width: 12px; height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+  }
+
+  .summary-text {
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--text);
+  }
+
+  /* BULLET STARTERS */
+  .starter-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+  .starter-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .starter-num {
+    width: 22px; height: 22px;
+    background: rgba(200,144,26,0.15);
+    color: var(--gold);
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    font-family: 'Syne', sans-serif;
+  }
+
+  .starter-text { font-size: 14px; color: var(--text); line-height: 1.6; }
+
+  /* CONTACTS */
+  .contact-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .contact-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .contact-row:first-child { padding-top: 0; }
+
+  .contact-av {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(0,61,166,0.3);
+    color: #7BA4E8;
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-family: 'Syne', sans-serif;
+  }
+
+  .contact-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .contact-detail { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+  /* WORKFLOW PILLS */
+  .pill-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pill {
+    background: rgba(200,144,26,0.12);
+    color: var(--gold);
+    border: 1px solid rgba(200,144,26,0.2);
+    border-radius: 20px;
+    padding: 4px 11px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  /* ACTIONS */
+  .result-actions {
+    display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;
+  }
+
+  /* SYNC */
+  .sync-line {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+  }
+
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .sync-dot.pending { background: var(--gold); animation: pulse 1s infinite; }
+  .sync-dot.success { background: var(--green); }
+  .sync-dot.error   { background: var(--red); }
+  .sync-dot.idle    { background: var(--muted); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  #file-input, #camera-input { display: none; }
+
+  /* DEEP DIVE LINK */
+  .deep-link {
+    display: block;
+    text-align: center;
+    padding: 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    margin-top: 4px;
+  }
+
+  .deep-link span { color: var(--gold); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">P°</div>
+    <div>
+      <div class="logo-name">POSTERior</div>
+      <div class="logo-tag">Flash Mode</div>
+    </div>
+  </div>
+  <div class="header-mode">⚡ Speed</div>
+</header>
+
+<main>
+
+  <!-- SETUP -->
+  <div class="setup-card">
+    <div class="setup-label">Session</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Conference</label>
+        <input type="text" id="conference-name" placeholder="TMS 2026…" />
+      </div>
+      <div class="field">
+        <label>Your Name</label>
+        <input type="text" id="your-name" placeholder="Hugues F." />
+      </div>
+    </div>
+    <div class="field-row single">
+      <div class="field">
+        <label>Anthropic API Key</label>
+        <div class="api-wrap">
+          <input type="password" id="api-key" placeholder="sk-ant-…" />
+          <button class="api-toggle" onclick="toggleKey()" id="key-toggle">show</button>
+        </div>
+      </div>
+    </div>
+    <div class="field-row single">
+      <div class="field">
+        <label>Google Apps Script URL <span style="font-weight:300;font-size:10px;opacity:0.7;">(optional — for logging)</span></label>
+        <input type="text" id="apps-script-url" placeholder="https://script.google.com/macros/s/…/exec" />
+      </div>
+    </div>
+    <label class="remember-row">
+      <input type="checkbox" id="save-settings" onchange="toggleSave()" style="width:auto;height:auto;" />
+      Remember settings
+    </label>
+  </div>
+
+  <!-- UPLOAD -->
+  <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+    <input type="file" id="file-input" accept="image/*,.pdf" onchange="handleFile(this.files[0])">
+    <input type="file" id="camera-input" accept="image/*" capture="environment" onchange="handleFile(this.files[0])">
+    <div class="upload-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C8901A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="3"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+    </div>
+    <div class="upload-title">Snap or Upload Poster</div>
+    <div class="upload-sub">JPG, PNG or PDF</div>
+    <div class="upload-btns" onclick="event.stopPropagation()">
+      <button class="btn btn-ghost" onclick="document.getElementById('camera-input').click()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Camera
+      </button>
+      <button class="btn btn-ghost" onclick="document.getElementById('file-input').click()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        File
+      </button>
+    </div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div id="preview-wrap">
+    <img id="preview-img" src="" alt="" />
+    <div id="pdf-notice">📄 PDF ready</div>
+    <div class="preview-bar">
+      <span class="preview-name" id="preview-name"></span>
+      <button class="btn btn-ghost btn-sm" onclick="clearFile()">Remove</button>
+    </div>
+  </div>
+
+  <!-- FLASH BUTTON -->
+  <div class="flash-row">
+    <button class="btn btn-flash" id="flash-btn" onclick="analyze()" disabled>
+      ⚡ Flash Analyze
+    </button>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loading">
+    <div class="flash-spinner"></div>
+    <div class="loading-title">Flashing…</div>
+    <div class="loading-sub">~15 seconds</div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results">
+
+    <div class="result-actions">
+      <button class="btn btn-ghost btn-sm" id="copy-btn" onclick="copyResult()">Copy</button>
+      <button class="btn btn-ghost btn-sm" onclick="resetApp()">Next Poster</button>
+    </div>
+
+    <!-- SYNC -->
+    <div class="sync-line" id="sync-bar">
+      <div class="sync-dot idle" id="sync-dot"></div>
+      <div id="sync-msg" style="flex:1;"></div>
+      <button class="btn btn-ghost btn-sm" id="retry-btn" onclick="syncToSheets()" style="display:none;">Retry</button>
+    </div>
+
+    <!-- OPPORTUNITY SCORE -->
+    <div id="score-card" class="score-card mid">
+      <div class="score-icon mid" id="score-icon">⚡</div>
+      <div>
+        <div class="score-label mid" id="score-label">Opportunity</div>
+        <div class="score-products" id="score-products"></div>
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="result-card">
+      <div class="card-heading">What they do</div>
+      <div class="summary-text" id="summary-text"></div>
+    </div>
+
+    <!-- CONVERSATION STARTERS -->
+    <div class="result-card">
+      <div class="card-heading">Start the conversation</div>
+      <ul class="starter-list" id="starters-list"></ul>
+    </div>
+
+    <!-- WORKFLOWS -->
+    <div class="result-card">
+      <div class="card-heading">Science area</div>
+      <div class="pill-row" id="workflows-row"></div>
+    </div>
+
+    <!-- CONTACTS -->
+    <div class="result-card" id="contacts-card">
+      <div class="card-heading">Who to talk to</div>
+      <div id="contacts-list"></div>
+    </div>
+
+    <!-- DEEP DIVE HINT -->
+    <div class="deep-link">
+      Need the full brief? Use <span>POSTERior</span> (full version)
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+let fileData = null, fileType = null, parsedResult = {}, currentConference = '';
+
+// ── SETTINGS ──
+(function load() {
+  if (localStorage.getItem('pof_save') !== 'true') return;
+  document.getElementById('save-settings').checked = true;
+  document.getElementById('api-key').value          = localStorage.getItem('pof_key')   || '';
+  document.getElementById('apps-script-url').value  = localStorage.getItem('pof_url')   || '';
+  document.getElementById('your-name').value         = localStorage.getItem('pof_name')  || '';
+  document.getElementById('conference-name').value   = localStorage.getItem('pof_conf')  || '';
+})();
+
+function toggleSave() {
+  if (document.getElementById('save-settings').checked) persist();
+  else ['pof_save','pof_key','pof_url','pof_name','pof_conf'].forEach(k => localStorage.removeItem(k));
+}
+
+function persist() {
+  if (!document.getElementById('save-settings').checked) return;
+  localStorage.setItem('pof_save', 'true');
+  localStorage.setItem('pof_key',  document.getElementById('api-key').value);
+  localStorage.setItem('pof_url',  document.getElementById('apps-script-url').value);
+  localStorage.setItem('pof_name', document.getElementById('your-name').value);
+  localStorage.setItem('pof_conf', document.getElementById('conference-name').value);
+}
+
+function toggleKey() {
+  const k = document.getElementById('api-key');
+  k.type = k.type === 'password' ? 'text' : 'password';
+  document.getElementById('key-toggle').textContent = k.type === 'password' ? 'show' : 'hide';
+}
+
+// ── FILE HANDLING ──
+const zone = document.getElementById('upload-zone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
+
+function handleFile(file) {
+  if (!file) return;
+  fileType = file.type;
+  const r = new FileReader();
+  r.onload = e => {
+    fileData = e.target.result.split(',')[1];
+    const img = document.getElementById('preview-img'), pdf = document.getElementById('pdf-notice');
+    const wrap = document.getElementById('preview-wrap');
+    if (file.type.startsWith('image/')) { img.src = e.target.result; img.style.display = 'block'; pdf.style.display = 'none'; }
+    else { img.style.display = 'none'; pdf.style.display = 'block'; }
+    document.getElementById('preview-name').textContent = file.name;
+    wrap.style.display = 'block';
+    document.getElementById('upload-zone').style.display = 'none';
+    document.getElementById('flash-btn').disabled = false;
+  };
+  r.readAsDataURL(file);
+}
+
+function clearFile() {
+  fileData = null; fileType = null;
+  document.getElementById('preview-wrap').style.display = 'none';
+  document.getElementById('preview-img').style.display = 'block';
+  document.getElementById('upload-zone').style.display = 'block';
+  document.getElementById('flash-btn').disabled = true;
+  document.getElementById('file-input').value = '';
+  document.getElementById('camera-input').value = '';
+}
+
+function resetApp() {
+  clearFile();
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('sync-bar').style.display = 'none';
+  parsedResult = {};
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── SYSTEM PROMPT ──
+const SYSTEM_PROMPT = `You are a Thermo Fisher Scientific MSD/AIG sales intelligence assistant. Analyze this scientific conference poster and return ONLY a valid JSON object with exactly these 5 keys. Be extremely concise — this is for a mobile speed-review tool used by account managers walking a poster hall.
+
+1. "summary" — string: exactly 2 short sentences. First sentence: what material/system they study and the core technique. Second sentence: the key finding or outcome. No filler words. Dense and informative.
+
+2. "opportunity_level" — string: one of "high", "mid", or "low":
+   - "high": clear need for 2+ TF instruments, active characterization work, well-funded group
+   - "mid": some TF relevance, 1 instrument fit, or early-stage work
+   - "low": minimal TF relevance, purely theoretical, or no characterization workflow
+
+3. "top_products" — array of 1-3 strings: the most relevant Thermo Fisher product names from this list ONLY, strictly following these rules:
+   - AXIA ChemiSEM: entry-level SEM+EDS — routine analysis
+   - Apreo ChemiSEM: high-performance SEM+EDS — heavy analytics
+   - SCIOS 3: FIB-SEM — 3D characterization (EITHER this OR Helios 5 PFIB, never both)
+   - Helios 5 PFIB: plasma FIB — large-volume 3D (EITHER this OR SCIOS 3, never both)
+   - Nexsa G2 XPS: XPS — if surface chemistry relevant
+   - Talos F200X TEM: TEM — atomic-scale imaging
+   - Avizo Software: 3D analysis, grain metrics, deep-learning image processing — if quantitative microstructural analysis or 3D datasets present
+   - Clean Mill: ion beam prep — ONLY Battery or Polymer work
+   - Clean Connect: air-sensitive transfer — ONLY if explicitly air/moisture sensitive materials mentioned
+   If truly no fit, return empty array.
+
+4. "starters" — array of exactly 3 strings: ultra-short conversation-starter questions (one sentence each, under 20 words). These should feel natural to say out loud at a poster — not formal, not generic. Specific to this poster's science.
+
+5. "contacts" — array of up to 3 objects {name, title, institution}: the most important contacts from the poster's author list. Prioritize PI/lead researcher first.
+
+Output ONLY the JSON object. No markdown, no explanation.`;
+
+// ── ANALYZE ──
+async function analyze() {
+  const apiKey     = document.getElementById('api-key').value.trim();
+  const conference = document.getElementById('conference-name').value.trim();
+
+  if (!apiKey)   { alert('API key needed.'); return; }
+  if (!fileData) { alert('Upload a poster first.'); return; }
+  if (!conference){ alert('Enter conference name.'); return; }
+
+  persist();
+  currentConference = conference;
+
+  document.getElementById('flash-btn').disabled = true;
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('sync-bar').style.display = 'none';
+
+  const mediaType = fileType === 'application/pdf' ? 'application/pdf' : fileType === 'image/png' ? 'image/png' : fileType === 'image/webp' ? 'image/webp' : 'image/jpeg';
+  const contentBlock = fileType === 'application/pdf'
+    ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: fileData } }
+    : { type: 'image',    source: { type: 'base64', media_type: mediaType, data: fileData } };
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-opus-4-5', max_tokens: 1200, system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: [contentBlock, { type: 'text', text: `Conference: ${conference}\n\nAnalyze this poster and return ONLY the JSON object.` }] }]
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || `API error ${res.status}`);
+    const raw = data.content.map(b => b.text || '').join('');
+    parsedResult = JSON.parse(raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim());
+    renderResults();
+    syncToSheets();
+
+  } catch (err) {
+    alert('Error: ' + err.message);
+    document.getElementById('flash-btn').disabled = false;
+  } finally {
+    document.getElementById('loading').style.display = 'none';
+  }
+}
+
+// ── RENDER ──
+function renderResults() {
+  const d = parsedResult;
+
+  // Opportunity score card
+  const level = d.opportunity_level || 'mid';
+  const icons = { high: '🎯', mid: '⚡', low: '👀' };
+  const labels = { high: 'Strong Opportunity', mid: 'Potential Fit', low: 'Low Priority' };
+  const sc = document.getElementById('score-card');
+  const si = document.getElementById('score-icon');
+  const sl = document.getElementById('score-label');
+  sc.className = `score-card ${level}`;
+  si.className = `score-icon ${level}`;
+  si.textContent = icons[level];
+  sl.className = `score-label ${level}`;
+  sl.textContent = labels[level];
+  document.getElementById('score-products').textContent =
+    (d.top_products || []).length ? (d.top_products).join(' · ') : 'No strong product fit identified';
+
+  // Summary
+  document.getElementById('summary-text').textContent = d.summary || '—';
+
+  // Starters
+  const starterList = document.getElementById('starters-list');
+  starterList.innerHTML = (d.starters || []).map((s, i) =>
+    `<li class="starter-item">
+      <div class="starter-num">${i+1}</div>
+      <div class="starter-text">${s}</div>
+    </li>`
+  ).join('');
+
+  // Workflows — derive from summary keywords if not present
+  const workflowEl = document.getElementById('workflows-row');
+  // We don't request workflows in flash mode — infer the science area from top_products context
+  // Instead show top_products as pills since that's what matters
+  const prods = d.top_products || [];
+  workflowEl.innerHTML = prods.length
+    ? prods.map(p => `<span class="pill">${p}</span>`).join('')
+    : '<span style="font-size:13px;color:var(--muted);font-style:italic;">No specific TF fit</span>';
+  document.querySelector('#results .result-card:nth-child(5) .card-heading').textContent = prods.length ? 'Recommended TF solutions' : 'Science area';
+
+  // Contacts
+  const contacts = d.contacts || [];
+  const cl = document.getElementById('contacts-list');
+  if (contacts.length) {
+    cl.innerHTML = contacts.map(c => {
+      const ini = (c.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const detail = [c.title, c.institution].filter(Boolean).join(' · ');
+      return `<div class="contact-row">
+        <div class="contact-av">${ini}</div>
+        <div>
+          <div class="contact-name">${c.name}</div>
+          ${detail ? `<div class="contact-detail">${detail}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  } else {
+    cl.innerHTML = '<div style="font-size:13px;color:var(--muted);font-style:italic;">No contacts identified</div>';
+  }
+
+  document.getElementById('results').style.display = 'block';
+  setTimeout(() => document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+}
+
+// ── SYNC TO SHEETS ──
+async function syncToSheets() {
+  const scriptUrl = document.getElementById('apps-script-url').value.trim();
+  const bar = document.getElementById('sync-bar');
+  const dot = document.getElementById('sync-dot');
+  const msg = document.getElementById('sync-msg');
+  const retry = document.getElementById('retry-btn');
+
+  bar.style.display = 'flex';
+  dot.className = 'sync-dot pending';
+  msg.textContent = 'Logging…';
+  retry.style.display = 'none';
+
+  if (!scriptUrl) {
+    dot.className = 'sync-dot idle';
+    msg.textContent = 'No Apps Script URL — logging skipped.';
+    return;
+  }
+
+  const d = parsedResult;
+  const payload = {
+    conference:    currentConference,
+    date:          new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'}),
+    analyst:       document.getElementById('your-name').value.trim(),
+    analystEmail:  '',
+    summary:       d.summary || '',
+    workflows:     (d.top_products || []).join(', '),
+    tfInstruments: (d.top_products || []).join(', '),
+    competitors:   '',
+    opportunities: (d.top_products || []).join(', '),
+    questions:     (d.starters || []).map((s,i) => `Starter ${i+1}: ${s}`).join('\n'),
+    answers:       '',
+    contacts:      (d.contacts || []).map(c => [c.name, c.title, c.institution].filter(Boolean).join(' | ')).join('\n'),
+    fullJson:      JSON.stringify(d, null, 2),
+    mode:          'FLASH'
+  };
+
+  try {
+    const result = JSON.parse(await (await fetch(scriptUrl, { method: 'POST', headers: {'Content-Type':'text/plain'}, body: JSON.stringify(payload) })).text());
+    if (result.status === 'ok') {
+      dot.className = 'sync-dot success';
+      msg.textContent = `✓ Logged to "${currentConference}"`;
+    } else throw new Error(result.message);
+  } catch (err) {
+    dot.className = 'sync-dot error';
+    msg.textContent = `Sync failed`;
+    retry.style.display = 'inline-flex';
+  }
+}
+
+// ── COPY ──
+function copyResult() {
+  const d = parsedResult;
+  const conf = document.getElementById('conference-name').value || 'Conference';
+  const level = { high: '🎯 Strong Opportunity', mid: '⚡ Potential Fit', low: '👀 Low Priority' }[d.opportunity_level] || '';
+  let t = `POSTERior Flash — ${conf}\n${level}\n`;
+  if ((d.top_products||[]).length) t += `Products: ${d.top_products.join(', ')}\n`;
+  t += `\n${d.summary}\n\nConversation starters:\n`;
+  (d.starters||[]).forEach((s,i) => { t += `${i+1}. ${s}\n`; });
+  if ((d.contacts||[]).length) {
+    t += '\nContacts:\n';
+    d.contacts.forEach(c => { t += `• ${c.name}${c.title?' — '+c.title:''}${c.institution?', '+c.institution:''}\n`; });
+  }
+  navigator.clipboard.writeText(t).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copied';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+</script>
+</body>
+</html>
