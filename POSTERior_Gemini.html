@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POSTERior Gemini — Thermo Fisher MSD/AIG</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --tf-blue: #003DA6; --tf-blue-light: #0057D9; --tf-blue-pale: #E8EFF9; --tf-blue-mid: #C2D0EE;
+    --tf-gold: #1A73E8; --tf-gold-pale: #E8F0FE;
+    --bg: #F4F6FA; --surface: #FFFFFF;
+    --border: rgba(0,61,166,0.10); --border-strong: rgba(0,61,166,0.18);
+    --text: #0D1B2A; --muted: #5A6880; --muted-light: #8A97AA;
+    --green: #1A7A3A; --green-pale: #E8F5ED;
+    --red: #B03030; --red-pale: #FDF0F0;
+    --radius: 14px; --radius-sm: 9px;
+    --shadow: 0 1px 10px rgba(0,61,166,0.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.65; }
+
+  /* HEADER */
+  header { background: var(--tf-blue); padding: 0 28px; display: flex; align-items: center; justify-content: space-between; height: 58px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.18); }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-mark { width: 34px; height: 34px; background: var(--tf-gold); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: white; }
+  .logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; color: white; }
+  .logo-sub { font-size: 11px; color: rgba(255,255,255,0.55); font-weight: 300; }
+  .header-right { text-align: right; }
+  .header-badge { background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.22); border-radius: 20px; padding: 4px 13px; font-size: 11px; color: rgba(255,255,255,0.9); }
+  .header-sub { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 3px; }
+
+  /* LAYOUT */
+  main { max-width: 800px; margin: 0 auto; padding: 28px 20px 72px; }
+
+  /* SETUP CARD */
+  .setup-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); padding: 22px 24px 20px; margin-bottom: 14px; }
+  .card-label { font-size: 10px; font-weight: 500; letter-spacing: 1.4px; text-transform: uppercase; color: var(--tf-blue); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .card-label::before { content: ''; width: 16px; height: 2px; background: var(--tf-gold); border-radius: 2px; flex-shrink: 0; }
+
+  /* FORM */
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  @media (max-width: 560px) { .row-2, .row-3 { grid-template-columns: 1fr; } }
+  label { display: block; font-size: 11px; font-weight: 500; color: var(--muted); margin-bottom: 5px; letter-spacing: 0.3px; }
+  input[type="text"], input[type="password"], input[type="email"] { width: 100%; height: 38px; border: 1.5px solid var(--border-strong); border-radius: var(--radius-sm); padding: 0 11px; font-size: 13px; font-family: inherit; color: var(--text); background: var(--bg); outline: none; transition: border-color 0.15s; }
+  input:focus { border-color: var(--tf-blue); background: white; }
+  .hint { font-size: 11px; color: var(--muted-light); margin-top: 4px; line-height: 1.5; }
+  .api-key-wrap { position: relative; }
+  .api-key-toggle { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 11px; color: var(--muted); padding: 2px 5px; font-family: inherit; }
+
+  /* UPLOAD */
+  .upload-zone { border: 2px dashed var(--border-strong); border-radius: var(--radius); background: var(--surface); padding: 40px 24px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 14px; }
+  .upload-zone:hover, .upload-zone.drag-over { border-color: var(--tf-blue); background: var(--tf-blue-pale); }
+  .upload-icon { width: 54px; height: 54px; background: var(--tf-blue-pale); border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+  .upload-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .upload-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+  .upload-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+  /* BUTTONS */
+  .btn { height: 38px; padding: 0 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; font-family: inherit; cursor: pointer; border: none; transition: all 0.15s; display: inline-flex; align-items: center; gap: 7px; }
+  .btn-primary { background: var(--tf-blue); color: white; }
+  .btn-primary:hover { background: var(--tf-blue-light); }
+  .btn-outline { background: transparent; color: var(--tf-blue); border: 1.5px solid var(--border-strong); }
+  .btn-outline:hover { border-color: var(--tf-blue); background: var(--tf-blue-pale); }
+  .btn-gold { background: var(--tf-gold); color: white; font-size: 15px; height: 50px; padding: 0 36px; border-radius: 10px; font-weight: 500; }
+  .btn-gold:hover { background: #A87515; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(200,144,26,0.3); }
+  .btn-gold:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-sm { height: 32px; padding: 0 13px; font-size: 12px; }
+
+  /* PREVIEW */
+  #preview-wrap { display: none; margin-bottom: 14px; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; }
+  #preview-img { width: 100%; max-height: 320px; object-fit: contain; display: block; background: #eee; }
+  .preview-bar { padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); }
+  .preview-name { font-size: 13px; color: var(--muted); }
+  #pdf-notice { padding: 36px 20px; text-align: center; font-size: 14px; color: var(--muted); display: none; }
+
+  /* ANALYZE */
+  .analyze-row { text-align: center; margin-bottom: 28px; }
+
+  /* LOADING */
+  #loading { display: none; text-align: center; padding: 52px 0; }
+  .spinner { width: 44px; height: 44px; border: 3px solid var(--tf-blue-pale); border-top-color: var(--tf-blue); border-radius: 50%; animation: spin 0.85s linear infinite; margin: 0 auto 22px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-title { font-family: 'Syne', sans-serif; font-size: 17px; color: var(--tf-blue); font-weight: 700; margin-bottom: 6px; }
+  .loading-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+  .loading-steps { display: inline-flex; flex-direction: column; gap: 7px; text-align: left; }
+  .loading-step { font-size: 13px; color: var(--muted-light); display: flex; align-items: center; gap: 9px; }
+  .loading-step::before { content: '○'; font-size: 11px; }
+  .loading-step.active { color: var(--tf-blue); font-weight: 500; }
+  .loading-step.active::before { content: '●'; }
+  .loading-step.done { color: var(--green); }
+  .loading-step.done::before { content: '✓'; }
+
+  /* RESULTS */
+  #results { display: none; }
+  .results-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .results-title { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; color: var(--text); }
+  .results-meta { font-size: 13px; color: var(--muted); margin-top: 3px; }
+  .results-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+
+  /* SYNC BAR */
+  .sync-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 11px 16px; margin-bottom: 18px; display: none; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .sync-dot.pending { background: var(--tf-gold); animation: pulse 1.1s infinite; }
+  .sync-dot.success { background: var(--green); }
+  .sync-dot.error { background: var(--red); }
+  .sync-dot.idle { background: var(--muted-light); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+  /* SECTION CARDS */
+  .section-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 10px; overflow: hidden; box-shadow: var(--shadow); }
+  .section-head { padding: 15px 20px; display: flex; align-items: center; gap: 13px; cursor: pointer; user-select: none; transition: background 0.12s; }
+  .section-head:hover { background: var(--tf-blue-pale); }
+  .section-head.open { border-bottom: 1px solid var(--border); }
+  .section-num { width: 26px; height: 26px; background: var(--tf-blue); color: white; border-radius: 50%; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Syne', sans-serif; }
+  .section-title-text { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); flex: 1; }
+  .section-count { font-size: 11px; color: var(--muted-light); background: var(--bg); border-radius: 10px; padding: 2px 9px; }
+  .chevron { color: var(--muted-light); font-size: 10px; transition: transform 0.2s; }
+  .chevron.open { transform: rotate(180deg); }
+  .section-body { display: none; }
+  .section-body.open { display: block; }
+
+  /* SUMMARY */
+  .summary-pad { padding: 22px 22px 20px; }
+  .summary-text { font-size: 15px; line-height: 1.85; color: var(--text); }
+
+  /* BADGES */
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; padding: 18px 22px; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 500; }
+  .badge-blue { background: var(--tf-blue-pale); color: var(--tf-blue); }
+  .badge-gold { background: var(--tf-gold-pale); color: var(--tf-gold); border: 1px solid rgba(200,144,26,0.2); }
+  .badge-green { background: var(--green-pale); color: var(--green); }
+  .badge-red { background: var(--red-pale); color: var(--red); }
+
+  /* INSTRUMENTS */
+  .instr-body { padding: 18px 22px 20px; }
+  .sub-heading { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .sub-heading.danger { color: var(--red); }
+
+  /* SELLING OPPORTUNITIES */
+  .opp-list { padding: 8px 22px 18px; }
+  .opp-item { display: flex; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--border); }
+  .opp-item:last-child { border-bottom: none; }
+  .opp-arrow { width: 30px; height: 30px; background: var(--tf-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .opp-content { flex: 1; min-width: 0; }
+  .opp-name { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--tf-blue); margin-bottom: 6px; }
+  .opp-reason { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+  /* Q&A ACCORDION */
+  .qa-list { padding: 12px 22px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .qa-card { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .qa-card-head { display: flex; align-items: flex-start; gap: 12px; padding: 15px 16px; cursor: pointer; transition: background 0.1s; }
+  .qa-card-head:hover { background: var(--tf-blue-pale); }
+  .qa-num { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; color: white; background: var(--tf-blue); border-radius: 6px; padding: 3px 9px; flex-shrink: 0; margin-top: 2px; }
+  .qa-question { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.55; flex: 1; }
+  .qa-chevron { color: var(--muted-light); font-size: 10px; transition: transform 0.2s; margin-top: 5px; flex-shrink: 0; }
+  .qa-chevron.open { transform: rotate(180deg); }
+  .qa-answer { display: none; border-top: 1px solid var(--border); padding: 16px 16px 18px 42px; }
+  .qa-answer.open { display: block; }
+  .qa-answer-label { font-size: 10px; font-weight: 500; color: var(--tf-gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .qa-answer-text { font-size: 14px; color: var(--muted); line-height: 1.75; }
+
+  /* CONTACTS */
+  .contacts-list { padding: 14px 22px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .contact-card { display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px; border: 1px solid var(--border); border-radius: 10px; }
+  .contact-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--tf-blue-pale); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; color: var(--tf-blue); flex-shrink: 0; }
+  .contact-name { font-weight: 500; font-size: 14px; color: var(--text); margin-bottom: 3px; }
+  .contact-role { font-size: 12px; color: var(--muted); line-height: 1.55; }
+  .contact-email { font-size: 12px; color: var(--tf-blue); margin-top: 3px; }
+
+  /* EMPTY */
+  .empty { font-size: 14px; color: var(--muted-light); font-style: italic; padding: 18px 22px; }
+
+  /* NOTICE */
+  .notice { background: var(--tf-blue-pale); border-radius: 10px; padding: 11px 16px; font-size: 13px; color: var(--tf-blue); margin-bottom: 16px; border-left: 3px solid var(--tf-blue); line-height: 1.55; }
+
+  #file-input, #camera-input { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">P°</div>
+    <div>
+      <div class="logo-text">POSTERior</div>
+      <div class="logo-sub">MSD/AIG · Thermo Fisher Scientific</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="header-badge">Conference Intelligence</div>
+    <div class="header-sub">Powered by Gemini AI</div>
+  </div>
+</header>
+
+<main>
+
+  <div class="notice">
+    Ensure you have the presenter's permission before photographing a poster. Results log automatically to Google Sheets and are emailed after each analysis. <strong>Gemini version</strong> — free via Google AI Studio.
+  </div>
+
+  <div class="setup-card">
+    <div class="card-label">Session Setup</div>
+    <div class="row-3" style="margin-bottom:12px;">
+      <div>
+        <label>Conference / Event Name</label>
+        <input type="text" id="conference-name" placeholder="e.g. M&M 2026, MRS Fall…" />
+      </div>
+      <div>
+        <label>Your Name</label>
+        <input type="text" id="your-name" placeholder="e.g. Hugues F." />
+      </div>
+      <div>
+        <label>Your Email</label>
+        <input type="email" id="your-email" placeholder="hugfsc@gmail.com" />
+      </div>
+    </div>
+    <div class="row-2">
+      <div>
+        <label>Google Gemini API Key <span style="font-weight:300;font-size:10px;">(stored in browser only)</span></label>
+        <div class="api-key-wrap">
+          <input type="password" id="api-key" placeholder="AIza…" />
+          <button class="api-key-toggle" onclick="toggleKey()" id="key-toggle">show</button>
+        </div>
+      </div>
+      <div>
+        <label>Google Apps Script URL <span style="font-weight:300;font-size:10px;">(Sheets &amp; email)</span></label>
+        <input type="text" id="apps-script-url" placeholder="https://script.google.com/macros/s/…/exec" />
+        <div class="hint">Deploy POSTERior_AppsScript.gs once, paste URL here.</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);font-weight:400;letter-spacing:0;">
+        <input type="checkbox" id="save-settings" onchange="toggleSaveSettings()" style="width:auto;height:auto;" />
+        Remember these settings in this browser
+      </label>
+    </div>
+  </div>
+
+  <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+    <input type="file" id="file-input" accept="image/*,.pdf" onchange="handleFile(this.files[0])">
+    <input type="file" id="camera-input" accept="image/*" capture="environment" onchange="handleFile(this.files[0])">
+    <div class="upload-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#003DA6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="3"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+    </div>
+    <div class="upload-title">Upload Poster Image or PDF</div>
+    <div class="upload-sub">Drag &amp; drop here, or use the buttons below</div>
+    <div class="upload-actions" onclick="event.stopPropagation()">
+      <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Choose File
+      </button>
+      <button class="btn btn-outline" onclick="event.stopPropagation();document.getElementById('camera-input').click()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Take Photo
+      </button>
+    </div>
+  </div>
+
+  <div id="preview-wrap">
+    <img id="preview-img" src="" alt="Poster preview" />
+    <div id="pdf-notice">📄 PDF loaded and ready for analysis.</div>
+    <div class="preview-bar">
+      <span class="preview-name" id="preview-name"></span>
+      <button class="btn btn-outline btn-sm" onclick="clearFile()">Remove</button>
+    </div>
+  </div>
+
+  <div class="analyze-row">
+    <button class="btn btn-gold" id="analyze-btn" onclick="analyze()" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Analyze Poster
+    </button>
+  </div>
+
+  <div id="loading">
+    <div class="spinner"></div>
+    <div class="loading-title">Analyzing poster…</div>
+    <div class="loading-sub">This takes about 30 seconds</div>
+    <div class="loading-steps">
+      <div class="loading-step" id="step-1">Reading poster content</div>
+      <div class="loading-step" id="step-2">Identifying workflows &amp; instruments</div>
+      <div class="loading-step" id="step-3">Generating opportunities &amp; Q&amp;A</div>
+      <div class="loading-step" id="step-4">Extracting key contacts</div>
+      <div class="loading-step" id="step-5">Logging to Google Sheets</div>
+    </div>
+  </div>
+
+  <div id="results">
+    <div class="results-top">
+      <div>
+        <div class="results-title">Poster Brief</div>
+        <div class="results-meta" id="results-meta"></div>
+      </div>
+      <div class="results-actions">
+        <button class="btn btn-outline btn-sm" id="copy-btn" onclick="copyAll()">Copy Text</button>
+        <button class="btn btn-outline btn-sm" onclick="downloadJSON()">Download JSON</button>
+        <button class="btn btn-primary btn-sm" onclick="resetApp()">New Poster</button>
+      </div>
+    </div>
+
+    <div class="sync-bar" id="sync-bar">
+      <div class="sync-dot idle" id="sync-dot"></div>
+      <div id="sync-msg" style="flex:1;"></div>
+      <button class="btn btn-outline btn-sm" id="retry-btn" onclick="syncToSheets()" style="display:none;">Retry</button>
+    </div>
+
+    <div id="sections-container"></div>
+  </div>
+
+</main>
+
+<script>
+let fileData = null, fileType = null, parsedSections = {}, currentConference = '', stepTimer = null;
+
+// Settings
+(function load() {
+  if (localStorage.getItem('pog_save') !== 'true') return;
+  document.getElementById('save-settings').checked = true;
+  document.getElementById('api-key').value         = localStorage.getItem('pog_key')   || '';
+  document.getElementById('apps-script-url').value = localStorage.getItem('pog_url')   || '';
+  document.getElementById('your-name').value        = localStorage.getItem('pog_name')  || '';
+  document.getElementById('your-email').value       = localStorage.getItem('pog_email') || '';
+  document.getElementById('conference-name').value  = localStorage.getItem('pog_conf')  || '';
+})();
+
+function toggleSaveSettings() {
+  if (document.getElementById('save-settings').checked) persistSettings();
+  else ['pog_save','pog_key','pog_url','pog_name','pog_email','pog_conf'].forEach(k => localStorage.removeItem(k));
+}
+function persistSettings() {
+  if (!document.getElementById('save-settings').checked) return;
+  localStorage.setItem('pog_save',  'true');
+  localStorage.setItem('pog_key',   document.getElementById('api-key').value);
+  localStorage.setItem('pog_url',   document.getElementById('apps-script-url').value);
+  localStorage.setItem('pog_name',  document.getElementById('your-name').value);
+  localStorage.setItem('pog_email', document.getElementById('your-email').value);
+  localStorage.setItem('pog_conf',  document.getElementById('conference-name').value);
+}
+
+function toggleKey() {
+  const k = document.getElementById('api-key');
+  k.type = k.type === 'password' ? 'text' : 'password';
+  document.getElementById('key-toggle').textContent = k.type === 'password' ? 'show' : 'hide';
+}
+
+const zone = document.getElementById('upload-zone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
+
+function handleFile(file) {
+  if (!file) return;
+  fileType = file.type;
+  new FileReader().then; // noop
+  const r = new FileReader();
+  r.onload = e => {
+    fileData = e.target.result.split(',')[1];
+    const img = document.getElementById('preview-img'), pdf = document.getElementById('pdf-notice');
+    if (file.type.startsWith('image/')) { img.src = e.target.result; img.style.display = 'block'; pdf.style.display = 'none'; }
+    else { img.style.display = 'none'; pdf.style.display = 'block'; }
+    document.getElementById('preview-name').textContent = file.name;
+    document.getElementById('preview-wrap').style.display = 'block';
+    document.getElementById('upload-zone').style.display = 'none';
+    document.getElementById('analyze-btn').disabled = false;
+  };
+  r.readAsDataURL(file);
+}
+
+function clearFile() {
+  fileData = null; fileType = null;
+  document.getElementById('preview-wrap').style.display = 'none';
+  document.getElementById('preview-img').style.display = 'block';
+  document.getElementById('upload-zone').style.display = 'block';
+  document.getElementById('analyze-btn').disabled = true;
+  document.getElementById('file-input').value = '';
+  document.getElementById('camera-input').value = '';
+}
+
+function resetApp() {
+  clearFile();
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('sync-bar').style.display = 'none';
+  parsedSections = {};
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function animateSteps() {
+  const ids = ['step-1','step-2','step-3','step-4'];
+  ids.forEach(id => document.getElementById(id).className = 'loading-step');
+  document.getElementById('step-5').className = 'loading-step';
+  let i = 0;
+  stepTimer = setInterval(() => {
+    if (i > 0) document.getElementById(ids[i-1]).className = 'loading-step done';
+    if (i < ids.length) { document.getElementById(ids[i]).className = 'loading-step active'; i++; }
+    else clearInterval(stepTimer);
+  }, 1900);
+}
+function stopSteps() { clearInterval(stepTimer); }
+
+const SYSTEM_PROMPT = `You are MSD_Wizard, a professional materials science expert and Thermo Fisher Scientific MSD/AIG product specialist. You analyze scientific conference posters and generate structured sales intelligence briefs.
+
+IMPORTANT: Respond ONLY with a valid JSON object — no markdown fences, no preamble, no trailing text — with exactly these 7 keys:
+
+1. "poster_summary" — string: 2–3 sentence summary using scientific language but accessible to a scientifically literate sales manager.
+
+2. "key_workflows" — array of strings: disciplines/areas documented in the poster such as "Materials Characterization", "Battery Research", "Nanotechnology", "Chemical Analysis", "Aerospace", "Polymers", "Ceramics", "Optical Materials", "Semiconductor", "Failure Analysis", "Life Sciences", "Additive Manufacturing". Only include workflows explicitly referenced or strongly implied.
+
+3. "thermo_fisher_instruments" — array of objects {name, status}: status "mentioned_in_poster" for TF products explicitly named; status "competitor_noted" for: JEOL, ZEISS, TESCAN, HITACHI, OXFORD INSTRUMENTS, BRUKER, GATAN, EDAX, FEI, NANOSCIENCE, CIQTEK. Return empty array if none found.
+
+4. "selling_opportunities" — array of up to 6 objects {product, reason}. Choose from this exact list with these strict rules:
+   - AXIA ChemiSEM: entry-level SEM+EDS — for routine/entry-level analysis
+   - Apreo ChemiSEM: high-performance SEM+EDS — when heavy analytics needed
+   - SCIOS 3: workhorse FIB-SEM — recommend EITHER this OR Helios 5 PFIB, never both
+   - Helios 5 PFIB: plasma FIB — recommend EITHER this OR SCIOS 3, never both
+   - Nexsa G2 XPS: XPS surface analysis — recommend by default if surface chemistry relevant
+   - Hypulse XPS: high-throughput XPS — ONLY if high-throughput surface characterization explicitly mentioned
+   - Talos F200X TEM: high-resolution TEM — when nanoscale structural detail needed
+   - Avizo Software: advanced 3D image analysis and visualization platform with AI/deep-learning-assisted segmentation, capable of generating quantitative metrics (grain size, shape, distribution) and performing 3D rendering from FIB-SEM, TEM, or CT datasets — recommend when the poster involves volumetric datasets, microstructural quantification, or complex image analysis workflows
+   - Clean Mill: broad ion beam cross-section prep — ONLY for Battery or Polymer workflows
+   - Clean Connect: air-sensitive sample transfer system — ONLY if the poster explicitly mentions materials that are air-sensitive or moisture-sensitive (e.g. lithium, sodium, reactive metals, hydroscopic materials). Do NOT recommend based on reactivity alone — only if sample handling sensitivity is explicitly a concern in the poster.
+   Each object: "product" (exact name) and "reason" (1–2 sentences specific to this poster).
+
+5. "questions" — array of exactly 5 strings: open-ended questions specific to this poster's science, not generic.
+
+6. "answers" — array of exactly 5 strings: detailed technical answers in same order, written to coach a sales manager with limited technical depth.
+
+7. "key_contacts" — array of up to 5 objects {name, title, department, institution, email, phone}: from author list and affiliations on the poster. Omit email/phone if not shown. Prioritize PIs and lead researchers.
+
+Output ONLY the JSON object. Nothing else.`;
+
+async function analyze() {
+  const apiKey     = document.getElementById('api-key').value.trim();
+  const conference = document.getElementById('conference-name').value.trim();
+  const userName   = document.getElementById('your-name').value.trim();
+
+  if (!apiKey)    { alert('Please enter your Gemini API key.'); return; }
+  if (!fileData)  { alert('Please upload a poster image or PDF.'); return; }
+  if (!conference){ alert('Please enter the conference name.'); return; }
+
+  persistSettings();
+  currentConference = conference;
+
+  document.getElementById('analyze-btn').disabled = true;
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('sync-bar').style.display = 'none';
+  animateSteps();
+
+  const mediaType = fileType === 'application/pdf' ? 'application/pdf' : fileType === 'image/png' ? 'image/png' : fileType === 'image/webp' ? 'image/webp' : 'image/jpeg';
+  const date = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+
+  try {
+    // Gemini 2.0 Flash API call
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+    const imagePart = {
+      inlineData: {
+        mimeType: mediaType,
+        data: fileData
+      }
+    };
+
+    const textPart = {
+      text: `${SYSTEM_PROMPT}\n\nConference: ${conference}\nAnalyzed by: ${userName||'Field Sales'}\nDate: ${date}\n\nAnalyze this scientific poster and return ONLY the JSON object.`
+    };
+
+    const res = await fetch(geminiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [imagePart, textPart] }],
+        generationConfig: { maxOutputTokens: 4096, temperature: 0.1 }
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || `API error ${res.status}`);
+
+    const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    parsedSections = JSON.parse(raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim());
+    stopSteps();
+    ['step-1','step-2','step-3','step-4'].forEach(id => document.getElementById(id).className = 'loading-step done');
+    document.getElementById('step-5').className = 'loading-step active';
+    renderResults(conference, userName, date);
+    await syncToSheets();
+  } catch (err) {
+    stopSteps();
+    alert('Analysis error: ' + err.message);
+    document.getElementById('analyze-btn').disabled = false;
+  } finally {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('step-5').className = 'loading-step done';
+  }
+}
+
+async function syncToSheets() {
+  const scriptUrl = document.getElementById('apps-script-url').value.trim();
+  const bar = document.getElementById('sync-bar'), dot = document.getElementById('sync-dot');
+  const msg = document.getElementById('sync-msg'), retry = document.getElementById('retry-btn');
+  bar.style.display = 'flex'; dot.className = 'sync-dot pending';
+  msg.textContent = 'Logging to Google Sheets and sending email…'; retry.style.display = 'none';
+  if (!scriptUrl) { dot.className = 'sync-dot idle'; msg.textContent = 'Sheets sync skipped — no Apps Script URL configured.'; return; }
+  const d = parsedSections;
+  const payload = {
+    conference: currentConference, date: new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}),
+    analyst: document.getElementById('your-name').value.trim(), analystEmail: document.getElementById('your-email').value.trim(),
+    summary: d.poster_summary||'', workflows: (d.key_workflows||[]).join(', '),
+    tfInstruments: (d.thermo_fisher_instruments||[]).filter(i=>i.status!=='competitor_noted').map(i=>i.name).join(', '),
+    competitors: (d.thermo_fisher_instruments||[]).filter(i=>i.status==='competitor_noted').map(i=>i.name).join(', '),
+    opportunities: (d.selling_opportunities||[]).map(o=>`${o.product}: ${o.reason}`).join('\n'),
+    questions: (d.questions||[]).map((q,i)=>`Q${i+1}: ${q}`).join('\n'),
+    answers: (d.answers||[]).map((a,i)=>`A${i+1}: ${a}`).join('\n'),
+    contacts: (d.key_contacts||[]).map(c=>[c.name,c.title,c.institution,c.email].filter(Boolean).join(' | ')).join('\n'),
+    fullJson: JSON.stringify(d,null,2)
+  };
+  try {
+    const result = JSON.parse(await (await fetch(scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})).text());
+    if (result.status==='ok') { dot.className='sync-dot success'; msg.textContent=`✓ Logged to "${currentConference}" tab · Email sent to ${result.emailedTo||'hugues.fsc@thermofisher.com'}`; }
+    else throw new Error(result.message||'Apps Script error');
+  } catch(err) { dot.className='sync-dot error'; msg.textContent=`Sync failed: ${err.message}`; retry.style.display='inline-flex'; }
+}
+
+function renderResults(conference, userName, date) {
+  const d = parsedSections;
+  document.getElementById('results-meta').textContent = `${conference} · ${date}${userName?' · '+userName:''}`;
+  const container = document.getElementById('sections-container');
+  container.innerHTML = '';
+
+  function makeSection(num, title, bodyHtml, startOpen, countLabel) {
+    const card = document.createElement('div'); card.className = 'section-card';
+    const head = document.createElement('div'); head.className = 'section-head'+(startOpen?' open':'');
+    head.innerHTML = `<div class="section-num">${num}</div><div class="section-title-text">${title}</div>${countLabel?`<div class="section-count">${countLabel}</div>`:''}<div class="chevron${startOpen?' open':''}">▼</div>`;
+    const body = document.createElement('div'); body.className = 'section-body'+(startOpen?' open':'');
+    body.innerHTML = bodyHtml;
+    head.addEventListener('click', () => {
+      const open = body.classList.contains('open');
+      body.classList.toggle('open',!open); head.classList.toggle('open',!open);
+      head.querySelector('.chevron').classList.toggle('open',!open);
+    });
+    card.appendChild(head); card.appendChild(body); return card;
+  }
+
+  // 1 Summary
+  container.appendChild(makeSection(1,'Poster Summary',
+    `<div class="summary-pad"><p class="summary-text">${d.poster_summary||'No summary generated.'}</p></div>`, true));
+
+  // 2 Workflows
+  const wf = d.key_workflows||[];
+  container.appendChild(makeSection(2,'Key Workflows',
+    wf.length ? `<div class="badge-row">${wf.map(w=>`<span class="badge badge-gold">${w}</span>`).join('')}</div>`
+              : `<div class="empty">No specific workflows identified.</div>`,
+    true, wf.length?`${wf.length} areas`:''));
+
+  // 3 Instruments
+  const tf = (d.thermo_fisher_instruments||[]).filter(i=>i.status!=='competitor_noted');
+  const comp = (d.thermo_fisher_instruments||[]).filter(i=>i.status==='competitor_noted');
+  let ih = '<div class="instr-body">';
+  if (tf.length) ih += `<div class="sub-heading">TF Products on Poster</div><div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:${comp.length?'20':'4'}px;">${tf.map(i=>`<span class="badge badge-green">✓ ${i.name}</span>`).join('')}</div>`;
+  if (comp.length) ih += `<div class="sub-heading danger">⚠ Competitor Instruments Noted</div><div style="display:flex;flex-wrap:wrap;gap:8px;">${comp.map(i=>`<span class="badge badge-red">${i.name}</span>`).join('')}</div>`;
+  if (!tf.length&&!comp.length) ih += `<p style="font-size:14px;color:var(--muted-light);font-style:italic;">No instruments identified on this poster.</p>`;
+  ih += '</div>';
+  container.appendChild(makeSection(3,'Thermo Fisher Solutions / Instruments', ih, false, (tf.length+comp.length)?`${tf.length+comp.length} found`:''));
+
+  // 4 Selling Opportunities
+  const opps = d.selling_opportunities||[];
+  container.appendChild(makeSection(4,'Selling Opportunities',
+    opps.length ? `<div class="opp-list">${opps.map(o=>`<div class="opp-item"><div class="opp-arrow">→</div><div class="opp-content"><div class="opp-name">${o.product}</div><div class="opp-reason">${o.reason}</div></div></div>`).join('')}</div>`
+                : `<div class="empty">No additional opportunities identified.</div>`,
+    false, opps.length?`${opps.length} products`:''));
+
+  // 5 Q&A combined
+  const qs = d.questions||[], as = d.answers||[];
+  const qaHtml = `<div class="qa-list">${qs.map((q,i)=>`
+    <div class="qa-card">
+      <div class="qa-card-head" onclick="toggleQA(${i})">
+        <span class="qa-num">Q${i+1}</span>
+        <span class="qa-question">${q}</span>
+        <span class="qa-chevron" id="qc-${i}">▼</span>
+      </div>
+      <div class="qa-answer" id="qa-${i}">
+        <div class="qa-answer-label">Coaching Answer</div>
+        <div class="qa-answer-text">${as[i]||'—'}</div>
+      </div>
+    </div>`).join('')}</div>`;
+  container.appendChild(makeSection(5,'Questions &amp; Coaching Answers', qaHtml, false, qs.length?`${qs.length} questions`:''));
+
+  // 6 Contacts
+  const contacts = d.key_contacts||[];
+  const ch = contacts.length
+    ? `<div class="contacts-list">${contacts.map(c=>{
+        const ini=(c.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+        const role=[c.title,c.department,c.institution].filter(Boolean).join(' · ');
+        return `<div class="contact-card"><div class="contact-avatar">${ini}</div><div><div class="contact-name">${c.name||'Unknown'}</div>${role?`<div class="contact-role">${role}</div>`:''} ${c.email?`<div class="contact-email">${c.email}</div>`:''} ${c.phone?`<div class="contact-role">${c.phone}</div>`:''}</div></div>`;
+      }).join('')}</div>`
+    : `<div class="empty">No contacts identified on this poster.</div>`;
+  container.appendChild(makeSection(6,'Key Contacts', ch, false, contacts.length?`${contacts.length} contacts`:''));
+
+  document.getElementById('results').style.display = 'block';
+  setTimeout(() => document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}), 100);
+}
+
+function toggleQA(i) {
+  document.getElementById(`qa-${i}`).classList.toggle('open');
+  document.getElementById(`qc-${i}`).classList.toggle('open');
+}
+
+function buildPlainText() {
+  const d=parsedSections, conf=document.getElementById('conference-name').value||'Conference';
+  const name=document.getElementById('your-name').value||'', date=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  let t=`POSTERior Brief\n${conf} · ${date}${name?' · '+name:''}\n${'─'.repeat(50)}\n\n`;
+  t+=`1. POSTER SUMMARY\n${d.poster_summary}\n\n2. KEY WORKFLOWS\n${(d.key_workflows||[]).join(' · ')}\n\n3. INSTRUMENTS\n`;
+  (d.thermo_fisher_instruments||[]).forEach(i=>{t+=`  ${i.status==='competitor_noted'?'⚠ [COMPETITOR]':'✓'} ${i.name}\n`;});
+  t+=`\n4. SELLING OPPORTUNITIES\n`;
+  (d.selling_opportunities||[]).forEach(o=>{t+=`  → ${o.product}\n     ${o.reason}\n\n`;});
+  t+=`5. QUESTIONS & ANSWERS\n`;
+  (d.questions||[]).forEach((q,i)=>{t+=`  Q${i+1}: ${q}\n  A${i+1}: ${(d.answers||[])[i]||'—'}\n\n`;});
+  t+=`6. KEY CONTACTS\n`;
+  (d.key_contacts||[]).forEach(c=>{t+=`  • ${c.name}${c.title?' — '+c.title:''}${c.institution?', '+c.institution:''}${c.email?' | '+c.email:''}\n`;});
+  return t;
+}
+
+function copyAll() {
+  navigator.clipboard.writeText(buildPlainText()).then(()=>{
+    const btn=document.getElementById('copy-btn'); btn.textContent='✓ Copied';
+    setTimeout(()=>btn.textContent='Copy Text',2200);
+  });
+}
+
+function downloadJSON() {
+  const conf=(document.getElementById('conference-name').value||'conference').replace(/\s+/g,'_');
+  const blob=new Blob([JSON.stringify(parsedSections,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`POSTERior_${conf}_${new Date().toISOString().slice(0,10)}.json`; a.click();
+}
+</script>
+</body>
+</html>
