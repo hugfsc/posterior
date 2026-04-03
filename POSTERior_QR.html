@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POSTERior · Quick Access</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #0A0F1E;
+    color: #F0F4FF;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+  }
+
+  .card {
+    background: #131929;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    padding: 40px 36px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .logo-mark {
+    width: 56px; height: 56px;
+    background: #C8901A;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 22px; font-weight: 800;
+    color: white;
+    margin: 0 auto 16px;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px; font-weight: 800;
+    color: #F0F4FF;
+    margin-bottom: 4px;
+  }
+
+  .tagline {
+    font-size: 13px;
+    color: #5A7090;
+    margin-bottom: 8px;
+  }
+
+  .mode-badge {
+    display: inline-block;
+    background: rgba(200,144,26,0.15);
+    border: 1px solid rgba(200,144,26,0.3);
+    color: #C8901A;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 28px;
+  }
+
+  /* QR CODE BOX */
+  .qr-wrap {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    display: inline-block;
+    margin-bottom: 24px;
+  }
+
+  #qrcode canvas, #qrcode img {
+    display: block;
+  }
+
+  .scan-label {
+    font-size: 13px;
+    color: #8090B0;
+    margin-bottom: 20px;
+  }
+
+  /* DIVIDER */
+  .divider {
+    display: flex; align-items: center; gap: 12px;
+    color: #2A3550; font-size: 11px; margin-bottom: 20px;
+  }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #1A2236; }
+
+  /* URL */
+  .url-box {
+    background: #0A0F1E;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #C8901A;
+    word-break: break-all;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .url-box:hover { border-color: #C8901A; }
+
+  .copy-btn {
+    width: 100%;
+    height: 44px;
+    background: #C8901A;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 24px;
+  }
+  .copy-btn:hover { background: #A87515; }
+
+  /* FEATURES */
+  .features {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 20px;
+  }
+
+  .feature {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #8090B0;
+  }
+
+  .feature-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #C8901A;
+    flex-shrink: 0;
+  }
+
+  /* ALSO LINK */
+  .also {
+    margin-top: 28px;
+    font-size: 12px;
+    color: #2A3550;
+    text-align: center;
+  }
+
+  .also a {
+    color: #5A7090;
+    text-decoration: none;
+  }
+
+  .also a:hover { color: #C8901A; }
+
+  /* PRINT STYLES */
+  @media print {
+    body { background: white; color: #0D1B2A; padding: 0; }
+    .card { background: white; border: 2px solid #003DA6; border-radius: 16px; padding: 32px; box-shadow: none; }
+    h1, .tagline { color: #0D1B2A; }
+    .mode-badge { background: #FDF3E3; color: #C8901A; border-color: #C8901A; }
+    .qr-wrap { border: 2px solid #E0E0E0; }
+    .scan-label { color: #5A6880; }
+    .url-box { background: #F4F6FA; color: #003DA6; border-color: #C2D0EE; }
+    .copy-btn { display: none; }
+    .feature { color: #5A6880; }
+    .also { color: #8090B0; }
+    .also a { color: #5A6880; }
+    .divider { color: #C2D0EE; }
+    .divider::before, .divider::after { background: #E0E6F0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo-mark">P°</div>
+  <h1>POSTERior Flash</h1>
+  <p class="tagline">MSD/AIG · Thermo Fisher Scientific</p>
+  <div class="mode-badge">⚡ Conference Intelligence</div>
+
+  <div class="qr-wrap">
+    <div id="qrcode"></div>
+  </div>
+
+  <p class="scan-label">Scan to open on your phone · No install needed</p>
+
+  <div class="divider">or copy the link</div>
+
+  <div class="url-box" onclick="copyUrl()" title="Click to copy">
+    hugfsc.github.io/posterior/POSTERior_Flash.html
+  </div>
+
+  <button class="copy-btn" onclick="copyUrl()" id="copy-btn">
+    Copy Link
+  </button>
+
+  <div class="features">
+    <div class="feature"><div class="feature-dot"></div>Snap a photo of any poster</div>
+    <div class="feature"><div class="feature-dot"></div>Get a 2-sentence summary in ~15 seconds</div>
+    <div class="feature"><div class="feature-dot"></div>3 ready-to-use conversation starters</div>
+    <div class="feature"><div class="feature-dot"></div>Opportunity signal — High / Mid / Low</div>
+    <div class="feature"><div class="feature-dot"></div>Results logged automatically</div>
+  </div>
+
+  <div class="also">
+    Need the full deep-dive brief?<br>
+    <a href="https://hugfsc.github.io/posterior/">hugfsc.github.io/posterior/</a>
+  </div>
+</div>
+
+<script>
+const FLASH_URL = 'https://hugfsc.github.io/posterior/POSTERior_Flash.html';
+
+new QRCode(document.getElementById('qrcode'), {
+  text: FLASH_URL,
+  width: 200,
+  height: 200,
+  colorDark: '#003DA6',
+  colorLight: '#ffffff',
+  correctLevel: QRCode.CorrectLevel.H
+});
+
+function copyUrl() {
+  navigator.clipboard.writeText(FLASH_URL).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = 'Copy Link', 2200);
+  });
+}
+</script>
+
+</body>
+</html>

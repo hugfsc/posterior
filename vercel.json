@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/flash", "destination": "/POSTERior_Flash.html" },
+    { "source": "/qr",    "destination": "/POSTERior_QR.html" }
+  ]
+}
